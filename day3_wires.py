@@ -41,6 +41,7 @@ def check_point_on_line(start, end, point):
 	return True
 
 
+# some testing
 res1 = check_overlap({"x": 1, "y": 0}, {"x": 1, "y": 4}, {"x": 0, "y": 2}, {"x": 3, "y": 2})
 res2 = check_overlap({"x": 1, "y": 0}, {"x": 1, "y": 1}, {"x": 0, "y": 2}, {"x": 3, "y": 2})
 res3 = check_point_on_line({'x': 6, 'y': 3}, {'x': 2, 'y': 3}, {'x': 4, 'y': 3})
@@ -51,7 +52,7 @@ print(calcDistBetweenStartEnd({"x": 1, "y": 0}, {'x': 1, 'y': 3}))
 
 # exit()
 
-with open("inputs/wire_directions_small.txt") as wirefile:
+with open("inputs/wire_directions.txt") as wirefile:
 	# loop through lines =^ wires
 	all_wires = []
 	crosspoints = []
@@ -67,7 +68,7 @@ with open("inputs/wire_directions_small.txt") as wirefile:
 			command = direction[0]
 			distance = int(direction[1:].strip())
 
-			# change positions
+			# change current position
 			if command == "L":
 				current_position["x"] -= distance
 			elif command == "R":
@@ -162,7 +163,7 @@ with open("inputs/wire_directions_small.txt") as wirefile:
 	print(all_wire_distances)
 
 	smallest_dist = -1
-	# hardcoded for two lines
+	# hardcoded for two wires
 	for point, dist in all_wire_distances[0].items():
 		if point not in all_wire_distances[1]:
 			continue # skip if the point is not in other one
