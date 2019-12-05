@@ -7,27 +7,36 @@ class Intcode:
 
 		self.OPCODES = {
 			1: {
-				"operation":  (lambda x, y: x+y),
 				"params": 3
 			},
 			2: {
-				"operation": (lambda x, y: x * y),
 				"params": 3
 			},
 			3: {
-				"operation": (lambda x, y: x * y),
 				"params": 1
 			},
 			4: {
-				"operation": (lambda x, y: x * y),
 				"params": 1
+			},
+			5: {
+				"params": 2
+			},
+			6: {
+				"params": 2
+			},
+			7: {
+				"params": 3
+			},
+			8: {
+				"params": 3
 			}
 		}
 
 	def load(self, address):
 		return self.memory[address]
 
-	def load_mode(self, param, mode):
+	def load_mode(self, params):
+		param, mode = params["param"], params["mode"]
 		if int(mode) == 1: # return value
 			return param
 		return self.load(param) # or loads value
@@ -37,13 +46,15 @@ class Intcode:
 		return True
 
 	def execute(self):
-		i = 0
-		while i < len(self.memory):
+		ip = 0
+		while ip < len(self.memory):
 
-			opcode = self.memory[i]
+			opcode = self.memory[ip]
 			opcode_string = f'{opcode:05d}' # padded with zeros
 			opcode_command = int(opcode_string[-2:])
 			opcode_modes = opcode_string[:-2]
+
+			increase_ip_auto = True
 
 			# print(opcode_string)
 
@@ -56,32 +67,73 @@ class Intcode:
 
 			# read params and modes
 			for j in range(1, param_num+1):
-				param = self.memory[i + j]
+				param = self.memory[ip + j]
 				mode = opcode_modes[-j]
 				params.append({"param": param, "mode": mode})
 
 			# print(params)
 
+			# add x + y
 			if opcode_command == 1:
-				value1 = self.load_mode(params[0]["param"], params[0]["mode"])
-				value2 = self.load_mode(params[1]["param"], params[1]["mode"])
+				value1 = self.load_mode(params[0])
+				value2 = self.load_mode(params[1])
 				result = value1 + value2
 				self.save(params[2]["param"], result)
-
+			# mul x * y
 			elif opcode_command == 2:
-				value1 = self.load_mode(params[0]["param"], params[0]["mode"])
-				value2 = self.load_mode(params[1]["param"], params[1]["mode"])
+				value1 = self.load_mode(params[0])
+				value2 = self.load_mode(params[1])
 				result = value1 * value2
 				self.save(params[2]["param"], result)
 
+			#input int
 			elif opcode_command == 3:
 				userint = input("Please input a single Integer: ")
 				self.save(params[0]["param"], int(userint))
 
+			#output int
 			elif opcode_command == 4:
-				print(self.load(params[0]["param"]))
+				print(self.load_mode(params[0]))
 
-			i += param_num+1
+			# jump if true
+			elif opcode_command == 5:
+				test_value = self.load_mode(params[0])
+				if test_value != 0:
+					jump_target = self.load_mode(params[1])
+					ip = jump_target
+					increase_ip_auto = False
+
+			# jump if false
+			elif opcode_command == 6:
+				test_value = self.load_mode(params[0])
+				if test_value == 0:
+					jump_target = self.load_mode(params[1])
+					ip = jump_target
+					increase_ip_auto = False
+
+			# less than
+			elif opcode_command == 7:
+				cmp1 = self.load_mode(params[0])
+				cmp2 = self.load_mode(params[1])
+				result = 0
+				if cmp1 < cmp2:
+					result = 1
+
+				self.save(params[2]["param"], result)
+
+			# equal
+			elif opcode_command == 8:
+				cmp1 = self.load_mode(params[0])
+				cmp2 = self.load_mode(params[1])
+				result = 0
+				if cmp1 == cmp2:
+					result = 1
+
+				self.save(params[2]["param"], result)
+
+			if increase_ip_auto:
+				ip += param_num+1
+
 
 	def dump(self):
 		return self.memory
@@ -93,4 +145,4 @@ class Intcode:
 computer = Intcode()
 computer.execute()
 
-print(computer.dump())
+# print(computer.dump())
