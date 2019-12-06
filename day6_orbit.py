@@ -55,13 +55,12 @@ with open("inputs/orbit.txt") as ofile:
 			# found parent of both!
 			print(parent)
 			dist_to_santas_parent = santaparents.index(parent) + 1
-			#add them together, then minus 1, we don't want to hop santas orbit, he is not THAT fat
+			#add them together, then minus 2, we don't want to hop santas orbit, he is not THAT fat
 			hops_to_santa = dist_to_my_parent + dist_to_santas_parent - 2
 			break # stop
 
 	print("Distance to Santa is", hops_to_santa)
 
-	exit()
 	print("DAY1:")
 	print("--------------")
 	resultDict = {}
