@@ -21,9 +21,8 @@ memoryBootState = [3, 8, 1001, 8, 10, 8, 105, 1, 0, 0, 21, 34, 59, 68, 89, 102, 
                    99
                    ]
 
-memoryBootStateTest=[3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,
--5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,
-53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10]
+memoryBootStateTest=[3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,
+27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
 
 """inputList = [1, 2]
 resultList = []
@@ -62,6 +61,7 @@ print("-------")
 possibilities = list(itertools.permutations([5, 6, 7, 8, 9]))
 
 maxSignal = 0
+maxPerm = None
 for permutation in possibilities:
     print("permutation nr.", permutation)
     pipe = 0
@@ -76,12 +76,12 @@ for permutation in possibilities:
         resultLists.append(new_resultList)
 
     output_from_last_amp = 0
-    pipe = 0  # inital input and input for next output
+    pipe = 0  # initial input and input for next output
     i = 0
     num_amps = len(permutation)
     while True:
         # looping over all amps over and over again
-        print("feedbacking..")
+        old_pipe = pipe
         current_amp = ampList[i]  # get current amp
         current_resultList = resultLists[i]
         current_resultList.clear()
@@ -91,10 +91,11 @@ for permutation in possibilities:
 
         # execute and check if halted
         if current_amp.execute() == 99:
+            print("halted from exit code 99")
             break # halted
 
         pipe = current_resultList[0]
-        print(pipe)
+        print("Cycle number {} with input: {} and output: {}".format(i, old_pipe, pipe))
         # cycling index
         i += 1
         if i == num_amps:
@@ -103,7 +104,10 @@ for permutation in possibilities:
             i = 0
             output_from_last_amp = pipe
 
+    print("Last amp value in this perm: {}".format(output_from_last_amp))
+
     if output_from_last_amp > maxSignal:
         maxSignal = output_from_last_amp
+        maxPerm = permutation
 
-print("max output from last amp is {}".format(maxSignal))
+print("max output from last amp is {} when using perm {}".format(maxSignal, maxPerm))
