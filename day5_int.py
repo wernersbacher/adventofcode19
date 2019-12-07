@@ -51,6 +51,7 @@ class Intcode:
 
 	def getNextInput(self):
 		if self.useInputList:
+			# print(self.inputList)
 			if self.inputList:
 				userint = self.inputList.pop(0)
 			else:
@@ -68,15 +69,16 @@ class Intcode:
 			print(value)
 
 	def waitForInput(self):
-		print("Wait for input ...")
+		# print("Wait for input ...")
 		self.paused = True
 
 	def appendInput(self, value):
-		print("Appending input")
+		# print("Appending input")
 		if not self.useInputList:
 			return False
 		self.inputList.append(value)
-		self.paused = False
+
+		self.execute()
 
 
 	def load(self, address):
@@ -93,6 +95,7 @@ class Intcode:
 		return True
 
 	def execute(self):
+		self.paused = False
 		while self.ip < len(self.memory) and not self.paused:
 
 			opcode = self.memory[self.ip]
@@ -102,10 +105,8 @@ class Intcode:
 
 			increase_ip_auto = True
 
-			# print(opcode_string)
-
 			if opcode_command == 99:
-				break
+				return 99
 
 			# get number of params
 			param_num = self.OPCODES[opcode_command]["params"]
@@ -116,8 +117,6 @@ class Intcode:
 				param = self.memory[self.ip + j]
 				mode = opcode_modes[-j]
 				params.append({"param": param, "mode": mode})
-
-			# print(params)
 
 			# add x + y
 			if opcode_command == 1:
@@ -135,7 +134,8 @@ class Intcode:
 			#input int
 			elif opcode_command == 3:
 				userint = self.getNextInput()
-				self.save(params[0]["param"], int(userint))
+				if not self.paused:
+					self.save(params[0]["param"], int(userint))
 
 			#output int
 			elif opcode_command == 4:
@@ -177,8 +177,10 @@ class Intcode:
 
 				self.save(params[2]["param"], result)
 
-			if increase_ip_auto:
+			if increase_ip_auto and not self.paused:
 				self.ip += param_num+1
+
+		return 0
 
 	def dump(self):
 		return self.memory
