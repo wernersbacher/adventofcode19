@@ -21,8 +21,8 @@ memoryBootState = [3, 8, 1001, 8, 10, 8, 105, 1, 0, 0, 21, 34, 59, 68, 89, 102, 
                    99
                    ]
 
-memoryBootStateTest=[3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,
-1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0]
+memoryBootStateTest=[3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,
+27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
 
 """inputList = [1, 2]
 resultList = []
@@ -34,10 +34,35 @@ print(resultList)"""
 possibilities = list(itertools.permutations([0, 1, 2, 3, 4]))
 maxSignal = 0
 for permutation in possibilities:
-    print(permutation)
+    # print(permutation)
 
     pipe = 0
 
+    for phase in permutation:
+        inputList = [phase]
+        resultList = []
+        amp1 = Intcode(memoryInput=memoryBootState, inputList=inputList, resultList=resultList)
+        amp1.execute()
+        # set output as input of next loop
+        pipe = resultList[0]
+
+    # print(pipe)
+    if pipe > maxSignal:
+        maxSignal = pipe
+
+print("Max Signal is {} without Feedback Loop".format(maxSignal))
+exit()
+print("-------")
+print("PART 2:")
+print("-------")
+
+
+possibilities = list(itertools.permutations([5, 6, 7, 8, 9]))
+ampList = []
+maxSignal = 0
+for permutation in possibilities:
+
+    pipe = 0
     for phase in permutation:
         inputList = [phase, pipe]
         resultList = []
@@ -46,8 +71,6 @@ for permutation in possibilities:
         # set output as input of next loop
         pipe = resultList[0]
 
-    print(pipe)
+    # print(pipe)
     if pipe > maxSignal:
         maxSignal = pipe
-
-print("Max Signal is {}".format(maxSignal))
