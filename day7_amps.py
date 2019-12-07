@@ -1,4 +1,5 @@
 from day5_int import Intcode
+import itertools
 
 memoryBootState = [3, 8, 1001, 8, 10, 8, 105, 1, 0, 0, 21, 34, 59, 68, 89, 102, 183, 264, 345, 426, 99999, 3, 9, 102, 5,
                    9, 9, 1001, 9, 5, 9, 4, 9, 99, 3, 9, 101, 3, 9, 9, 1002, 9, 5, 9, 101, 5, 9, 9, 1002, 9, 3, 9, 1001,
@@ -20,10 +21,33 @@ memoryBootState = [3, 8, 1001, 8, 10, 8, 105, 1, 0, 0, 21, 34, 59, 68, 89, 102, 
                    99
                    ]
 
+memoryBootStateTest=[3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,
+1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0]
 
-inputList = [1, 2]
+"""inputList = [1, 2]
 resultList = []
 amp1 = Intcode(memoryInput=memoryBootState, inputList=inputList, resultList=resultList)
 amp1.execute()
 
-print(resultList)
+print(resultList)"""
+
+possibilities = list(itertools.permutations([0, 1, 2, 3, 4]))
+maxSignal = 0
+for permutation in possibilities:
+    print(permutation)
+
+    pipe = 0
+
+    for phase in permutation:
+        inputList = [phase, pipe]
+        resultList = []
+        amp1 = Intcode(memoryInput=memoryBootState, inputList=inputList, resultList=resultList)
+        amp1.execute()
+        # set output as input of next loop
+        pipe = resultList[0]
+
+    print(pipe)
+    if pipe > maxSignal:
+        maxSignal = pipe
+
+print("Max Signal is {}".format(maxSignal))
