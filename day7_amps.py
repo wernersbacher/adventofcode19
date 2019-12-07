@@ -61,7 +61,6 @@ print("-------")
 possibilities = list(itertools.permutations([5, 6, 7, 8, 9]))
 
 maxSignal = 0
-maxPerm = None
 for permutation in possibilities:
     print("permutation nr.", permutation)
     pipe = 0
@@ -69,8 +68,8 @@ for permutation in possibilities:
     resultLists = []
     # set up amps
     for phase in permutation:
-        new_resultList = []
-        new_amp = Intcode(memoryInput=memoryBootStateTest, inputList=[phase], resultList=new_resultList)
+        new_resultList = []  # this is the place where the output from the program gets written to, yes its hacky
+        new_amp = Intcode(memoryInput=memoryBootState, inputList=[phase], resultList=new_resultList)
 
         ampList.append(new_amp)
         resultLists.append(new_resultList)
@@ -89,20 +88,19 @@ for permutation in possibilities:
         # append output from pre-amp
         current_amp.appendInput(pipe)
 
+        pipe = current_resultList[0]
         # execute and check if halted
-        if current_amp.execute() == 99:
+        execution_code = current_amp.execute()
+        if execution_code == 99 and i == num_amps-1:
             print("halted from exit code 99")
+            print("halted pipe: {}".format(pipe))
+
+            output_from_last_amp = pipe
             break # halted
 
-        pipe = current_resultList[0]
         print("Cycle number {} with input: {} and output: {}".format(i, old_pipe, pipe))
         # cycling index
-        i += 1
-        if i == num_amps:
-            print("start from the beginning")
-            # start from beginning, save output from last amp
-            i = 0
-            output_from_last_amp = pipe
+        i = (i+1) % num_amps
 
     print("Last amp value in this perm: {}".format(output_from_last_amp))
 
