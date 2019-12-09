@@ -69,7 +69,7 @@ for permutation in possibilities:
     # set up amps
     for phase in permutation:
         new_resultList = []  # this is the place where the output from the program gets written to, yes its hacky
-        new_amp = Intcode(memoryInput=memoryBootState, inputList=[phase], resultList=new_resultList)
+        new_amp = Intcode(memoryInput=memoryBootStateTest, inputList=[phase], resultList=new_resultList)
 
         ampList.append(new_amp)
         resultLists.append(new_resultList)
