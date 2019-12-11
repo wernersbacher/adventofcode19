@@ -90,7 +90,7 @@ class Intcode:
 			return False
 		self.inputList.append(value)
 
-		self.execute()
+		return self.execute()
 
 	def load(self, address):
 		if address in self.memory:
