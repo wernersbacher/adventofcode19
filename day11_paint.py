@@ -36,6 +36,10 @@ current_direction = 0
 x = 0
 y = 0
 
+# change here the starting color to get to part 1 == black or part 2 == white
+
+coloredmap[(x, y)] = WHITE
+
 while True:
 	#load the color at the current coodinate
 	coordinates = (x, y)
@@ -66,3 +70,14 @@ while True:
 
 print(coloredmap)
 print(len(coloredmap))
+
+for i in range(8):
+
+	for j in range(50):
+		coords = j, i
+		toPrint = " "
+		if coords in coloredmap and coloredmap[coords] == WHITE:
+			toPrint = "█"
+		print(toPrint, end="", flush=True)
+
+	print("; ")
