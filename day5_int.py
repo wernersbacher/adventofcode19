@@ -160,6 +160,8 @@ class Intcode:
 				userint = self.getNextInput()
 				if not self.paused:
 					self.save_mode(params[0], int(userint))
+				else:
+					return 100 # 100 say it waits for a number
 
 			#output int
 			elif opcode_command == 4:
